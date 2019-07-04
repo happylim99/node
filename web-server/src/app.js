@@ -1,11 +1,13 @@
 const path = require('path') // core node module
 const express = require('express')
 const hbs = require('hbs')
+const geocode = require('./utils/geocode')
+const forecast = require('./utils/forecast')
 
-//console.log(__dirname)
-//console.log(path.join(__dirname, '../public'))
 
 const app = express()
+const port = process.env.PORT || 3000
+
 const publicDirectoryPath = path.join(__dirname, '../public')
 const viewsPath = path.join(__dirname, '../templates/views')
 const partialsPath = path.join(__dirname, '../templates/partials')
@@ -19,23 +21,10 @@ hbs.registerPartials(partialsPath)
 app.use(express.static(publicDirectoryPath))
 
 app.get('', (req, res) => {
-    res.send([
-        {
-            name: 'name1',
-            age: 20
-        },
-        {
-            name: 'name2',
-            age: 30
-        }
-
-    ])
-    /*
     res.render('index', {
-        title: 'weather app',
+        title: 'Weather app',
         name: 'index name'
     })
-    */
 })
 
 app.get('/about', (req, res) => {
@@ -75,18 +64,64 @@ app.get('/about', (req, res) => {
 })
 */
 app.get('/weather', (req, res) => {
-    res.send([
-        {
-            weather1: 'good day',
-            description: 'really good day'
-        },
-        {
-            weather2: 'best day',
-            description: 'really best day'
+    address = req.query.address
+    if(!address) {
+        return res.send({
+            error: 'No address'
+        })
+    }
+    geocode(address, (error, { longitude, latitude, location } = {}) => {
+        if(error) {
+            return res.send({
+                error: 'Connection error'
+            })
         }
-    ])
+
+        forecast(longitude, latitude, (error, data) => {
+            if(error) {
+                return res.send({
+                    error: 'Connection error'
+                })
+            }
+            res.send({
+                address: address,
+                data: data,
+                location: location
+            })
+        })
+    })
+})
+    /*
+    res.send({
+        address: 'Boston'
+    })
+    */
+
+app.get('/products', (req, res) => {
+    if(!req.query.search) {
+        return res.send({
+            error: 'you must provide search term'
+        })
+    }
+    res.send({
+        products: []
+    })
 })
 
-app.listen(3000, () => {
-    console.log('Server is up on port 3000')
+app.get('/help/*', (req, res) => {
+    res.render('file_not_found', {
+        code: '404-1',
+        errorMsg: 'Article not found'
+    })
+})
+
+app.get('*', (req, res) => {
+    res.render('404', {
+        code: '404',
+        errorMsg: 'Page not found'
+    })
+})
+
+app.listen(port, () => {
+    console.log('Server is up on port ' + port)
 })
