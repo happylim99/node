@@ -12,6 +12,7 @@ const fs = require('fs');
 // console.log(dataBuffer);
 // console.log(data);
 // console.log(data.title);
+
 const dataBuffer = fs.readFileSync('1-json.json');
 const dataJSON = dataBuffer.toString();
 const data = JSON.parse(dataJSON);

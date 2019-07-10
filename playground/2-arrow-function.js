@@ -2,13 +2,21 @@
 //     return x * x
 // }
 
-// const square = (x) => {
-//     return x * x
-// }
+const square = (x, callb) => {
+    setTimeout(() => {
+        callb(x * x)
+    }, 2000)
+    //return x * x
+}
+
+square(2, (sum) => {
+    console.log(sum)
+})
 
 //const square = (x) => x * x
 //console.log(square(3))
 
+/*
 const event = {
     name: 'Birthday Party',
     guestList: ['Andrew', 'Jen', 'Mike'],
@@ -31,3 +39,4 @@ const event = {
 }
 
 event.printGuestList()
+*/
