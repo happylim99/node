@@ -6,8 +6,46 @@ const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
 
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT
 
+app.use(express.json())
+app.use(userRouter)
+app.use(taskRouter)
+
+app.listen(port, () => {
+    console.log('Server is up on port ' + port)
+})
+
+/*
+const multer = require('multer')
+const upload = multer({
+    dest: 'images',
+    limits: {
+        fileSize: 1000000 // 1mb
+    },
+    fileFilter(req, file, cb) {
+        if(!file.originalname.match(/\.(doc|docx)$/)) {
+            return cb(new Error('Please upload a Word'))
+        }
+        cb(undefined, true)
+        //silience reject
+        //cb(undefined, false)
+    }
+})
+*/
+/*
+// just a  knowledge of putting it to upload
+const errorMiddleware = (req, res, next) => {
+    throw new Error ('From my middleware')
+}
+*/
+/*
+app.post('/upload', upload.single('upload'), (req, res) => {
+    res.send()
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message })
+})
+*/
 //maintenance mode
 /*
 app.use((req, res) => {
@@ -25,13 +63,7 @@ app.use((req, res, next) => {
 })
 */
 
-app.use(express.json())
-app.use(userRouter)
-app.use(taskRouter)
 
-app.listen(port, () => {
-    console.log('Server is up on port ' + port)
-})
 
 /*
 const main = async () => {
